@@ -44,29 +44,7 @@
                     <td>Subtotal</td>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td><a href="#"><i class="fa-regular fa-times-circle"></i></a></td>
-                    <td><img src="images/products/f1.jpg" alt=""><span>Summer T-Shirt</span></td>
-                    <td>$19.99</td>
-                    <td><input type="number" value="1"></td>
-                    <td>$19.99</td>
-                </tr>
-                <tr>
-                    <td><a href="#"><i class="fa-regular fa-times-circle"></i></a></td>
-                    <td><img src="images/products/f2.jpg" alt=""><span>Summer T-Shirt</span></td>
-                    <td>$19.99</td>
-                    <td><input type="number" value="1"></td>
-                    <td>$19.99</td>
-                </tr>
-                <tr>
-                    <td><a href="#"><i class="fa-regular fa-times-circle"></i></a></td>
-                    <td><img src="images/products/f3.jpg" alt=""><span>Summer T-Shirt</span></td>
-                    <td>$19.99</td>
-                    <td><input type="number" value="1"></td>
-                    <td>$19.99</td>
-                </tr>
-            </tbody>
+            <tbody></tbody>
         </table>
     </section>
 
@@ -83,7 +61,7 @@
             <table>
                 <tr>
                     <td>Cart Subtotal</td>
-                    <td>$59.97</td>
+                    <td id="cart-subtotal"></td>
                 </tr>
                 <tr>
                     <td>Shipping</td>
@@ -91,7 +69,7 @@
                 </tr>
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td><strong>$69.97</strong></td>
+                    <td><strong id="total"></strong></td>
                 </tr>
             </table>
             <button class="normal">Proceed to checkout</button>
@@ -143,6 +121,82 @@
             <img src="images/pay/pay.png" alt="">
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tbody = document.querySelector("#cart tbody");
+            const subtotal = document.getElementById("cart-subtotal");
+            const total = document.getElementById("total");
+
+            // Function to remove an item from the cart and update localStorage
+            function removeCartItem(index) {
+                // Get the cart items from localStorage
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+                // Remove the item at the specified index
+                cartItems.splice(index, 1);
+
+                // Save the updated cart items back to localStorage
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+                // Reload the page to reflect the changes
+                location.reload();
+            }
+
+            const removeIcons = document.querySelectorAll("#cart tbody td:first-child a");
+
+            // Event listener for remove icon clicks
+            document.querySelector('tbody').addEventListener('click', function(event) {
+                // Check if the clicked element is the remove icon
+                if (event.target.classList.contains('fa-times-circle')) {
+                    const index = event.target.getAttribute('data-index');
+                    // Call the removeCartItem function with the index
+                    removeCartItem(index);
+                }
+            })
+
+            // Get the cart items from localStorage
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+            // Iterate through the cart items and add them to the table
+            cartItems.forEach(item => {
+                const newRow = document.createElement("tr");
+
+                // Create cells for each property of the cart item
+                const removeCell = document.createElement('td');
+                removeCell.innerHTML = '<a><i class="fa-regular fa-times-circle"></i></a>';
+
+                const productCell = document.createElement('td');
+                productCell.innerHTML = `<img src="${item.image}" alt=""><span>${item.name}</span>`;
+
+                const priceCell = document.createElement('td');
+                priceCell.textContent = item.price;
+
+                const quantityCell = document.createElement('td');
+                quantityCell.innerHTML = `<input type="number" value="${item.quantity}">`;
+
+                const subtotalCell = document.createElement('td');
+                subtotalCell.textContent = `$${item.subtotal}`;
+
+                newRow.appendChild(removeCell);
+                newRow.appendChild(productCell);
+                newRow.appendChild(priceCell);
+                newRow.appendChild(quantityCell);
+                newRow.appendChild(subtotalCell);
+
+                tbody.appendChild(newRow);
+            })
+
+            // Calculate and update the cart subtotal
+
+            const cartTotal = cartItems.reduce((total, item) => total + parseFloat(item.subtotal), 0).toFixed(2);
+            subtotal.textContent = `$${cartTotal}`;
+
+            // Calculate the total including shipping
+            const totalAmount = (parseFloat(cartTotal) + 10.00).toFixed(2);
+            total.textContent = `$${totalAmount}`;
+        })
+    </script>
 
     <script src="script.js"></script>
 </body>

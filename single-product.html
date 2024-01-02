@@ -59,7 +59,7 @@
                 <option>XXL</option>
             </select>
             <input type="number" value="1">
-            <button class="normal">Add To Cart</button>
+            <button class="normal" id="add-to-cart">Add To Cart</button>
             <h4>Product Details</h4>
             <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span>
         </div>
@@ -192,6 +192,40 @@
             <img src="images/pay/pay.png" alt="">
         </div>
     </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const addToCartBtn = document.querySelector("#add-to-cart");
+    
+            addToCartBtn.addEventListener("click", function() {
+                // Get values from the single-product page
+                const productName = document.querySelector('.single-pro-details h4').textContent;
+                const productImage = document.getElementById('main-img').src;
+                const productPrice = document.getElementById('product-price').textContent;
+                const quantity = document.querySelector('.single-pro-details input[type="number"]').value;
+                const subtotal = (parseFloat(productPrice.slice(1)) * quantity).toFixed(2);
+
+                // Create an object representing the cart item
+                const cartItem = {
+                    name: productName,
+                    image: productImage,
+                    price: productPrice,
+                    quantity: quantity,
+                    subtotal: subtotal
+                };
+
+                // Get the existing cart items from localStorage or initialize an empty array
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+                // Add the new item to the cart
+                cartItems.push(cartItem);
+
+                // Save the updated cart items back to localStorage
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            })
+        })
+    </script>
+
     <script src="script.js"></script>
 </body>
 </html>

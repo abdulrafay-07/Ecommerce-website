@@ -123,6 +123,4 @@ document.addEventListener('DOMContentLoaded', function() {
     if (priceElement && price) {
         priceElement.textContent = price;
     }
-
-    
 });
