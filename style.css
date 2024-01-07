@@ -868,6 +868,10 @@ footer .follow i:hover, footer a:hover {
     text-align: center;
 }
 
+#cart table td:nth-child(1) i {
+    cursor: pointer;
+}
+
 #cart table td:nth-child(2) {
     width: 180px;
     text-align: center;
