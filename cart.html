@@ -159,7 +159,7 @@
             const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
             // Iterate through the cart items and add them to the table
-            cartItems.forEach(item => {
+            cartItems.forEach((item, index) => {
                 const newRow = document.createElement("tr");
 
                 // Create cells for each property of the cart item
@@ -178,6 +178,29 @@
                 const subtotalCell = document.createElement('td');
                 subtotalCell.textContent = `$${item.subtotal}`;
 
+                // Change of quantity in cart page
+                quantityCell.querySelector("input").addEventListener("input", function() {
+                    // Get the updated quantity
+                    const updatedQuantity = parseInt(this.value, 10);
+                    cartItems[index].quantity = updatedQuantity;
+
+                    // Recalculate the subtotal for the updated quantity
+                    const updatedSubtotal = (parseFloat(cartItems[index].price.slice(1)) * updatedQuantity).toFixed(2);
+                    cartItems[index].subtotal = updatedSubtotal;
+
+                    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+                    subtotalCell.textContent = `$${updatedSubtotal}`;
+
+                    // Recalculate and update the cart subtotal and total
+                    const updatedCartTotal = cartItems.reduce((total, item) => total + parseFloat(item.subtotal), 0).toFixed(2);
+                    subtotal.textContent = `$${updatedCartTotal}`;
+
+                    // Calculate the total including shipping
+                    const totalAmount = (parseFloat(updatedCartTotal) + 10.00).toFixed(2);
+                    total.textContent = `$${totalAmount}`;
+                })
+
                 newRow.appendChild(removeCell);
                 newRow.appendChild(productCell);
                 newRow.appendChild(priceCell);
@@ -188,7 +211,6 @@
             })
 
             // Calculate and update the cart subtotal
-
             const cartTotal = cartItems.reduce((total, item) => total + parseFloat(item.subtotal), 0).toFixed(2);
             subtotal.textContent = `$${cartTotal}`;
 
